@@ -35,7 +35,7 @@ warnings.filterwarnings("ignore")
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Pharma Invest",
-    page_icon="💊📈",
+    page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded",
 )
