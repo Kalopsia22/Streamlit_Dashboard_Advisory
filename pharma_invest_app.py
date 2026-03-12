@@ -35,7 +35,7 @@ warnings.filterwarnings("ignore")
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Pharma Invest",
-    page_icon="💊",
+    page_icon="💊📈",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -972,14 +972,41 @@ Rules: Be specific and actionable. Reference specific stocks. 200-350 words. Use
         st.markdown(f"<div class='chat-user'>{latest2}</div>",unsafe_allow_html=True)
         with st.spinner("Analysing..."):
             try:
-                msgs3 = [{"role":m["role"],"content":m["content"]} for m in st.session_state.chat_history]
-                resp3 = requests.post("https://api.anthropic.com/v1/messages",
-                    headers={"Content-Type":"application/json"},
-                    json={"model":"claude-sonnet-4-20250514","max_tokens":1000,"system":sys_p,"messages":msgs3},timeout=30)
-                d3 = resp3.json()
-                ai_rep = "".join(b.get("text","") for b in d3.get("content",[]) if b.get("type")=="text")
-                if not ai_rep: ai_rep = f"Error: {d3.get('error',{}).get('message','Unknown')}"
-            except Exception as e3: ai_rep = f"Connection error: {e3}"
+                # Resolve API key: st.secrets → environment variable
+                api_key = None
+                try:
+                    api_key = st.secrets["ANTHROPIC_API_KEY"]
+                except Exception:
+                    api_key = os.environ.get("ANTHROPIC_API_KEY")
+
+                if not api_key:
+                    ai_rep = (
+                        "⚙️ API key not configured. To enable the AI Advisor:\n\n"
+                        "**Option A — Streamlit secrets (recommended):**\n"
+                        "Create `.streamlit/secrets.toml` in your project folder:\n"
+                        "```\nANTHROPIC_API_KEY = \"sk-ant-...\"\n```\n\n"
+                        "**Option B — Environment variable before running:**\n"
+                        "```\nexport ANTHROPIC_API_KEY=\"sk-ant-...\"\n```\n\n"
+                        "Get your key at https://console.anthropic.com"
+                    )
+                else:
+                    msgs3 = [{"role":m["role"],"content":m["content"]} for m in st.session_state.chat_history]
+                    resp3 = requests.post(
+                        "https://api.anthropic.com/v1/messages",
+                        headers={
+                            "Content-Type":      "application/json",
+                            "x-api-key":         api_key,
+                            "anthropic-version": "2023-06-01",
+                        },
+                        json={"model":"claude-sonnet-4-20250514","max_tokens":1000,"system":sys_p,"messages":msgs3},
+                        timeout=30,
+                    )
+                    d3 = resp3.json()
+                    ai_rep = "".join(b.get("text","") for b in d3.get("content",[]) if b.get("type")=="text")
+                    if not ai_rep:
+                        ai_rep = f"Error: {d3.get('error',{}).get('message','Unknown error')}"
+            except Exception as e3:
+                ai_rep = f"Connection error: {e3}"
         st.session_state.chat_history.append({"role":"assistant","content":ai_rep})
         st.markdown(f"<div class='chat-ai'>{ai_rep}<div class='chat-meta'>AI Advisor · {datetime.now().strftime('%I:%M %p')}</div></div>",unsafe_allow_html=True)
     else:
