@@ -1,0 +1,40 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  PHARMA INVEST — Requirements                                              ║
+# ║  Install: pip install -r requirements.txt                                  ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# ── Core Framework ────────────────────────────────────────────────────────────
+streamlit>=1.35.0
+
+# ── Data & Finance ────────────────────────────────────────────────────────────
+yfinance>=0.2.40
+pandas>=2.0.0
+numpy>=1.26.0
+
+# ── Visualisation ─────────────────────────────────────────────────────────────
+plotly>=5.20.0
+
+# ── Machine Learning (used in pharma_stock_tracker.py forecasting engine) ────
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+
+# ── Statistical Modelling ─────────────────────────────────────────────────────
+statsmodels>=0.14.0
+
+# ── Time Series Forecasting (Prophet — Meta) ──────────────────────────────────
+# Note: Prophet requires pystan or cmdstanpy as a backend.
+# Recommended install sequence:
+#   pip install pystan==2.19.1.1
+#   pip install prophet
+prophet>=1.1.5
+
+# ── HTTP / Web Scraping ───────────────────────────────────────────────────────
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+# ── Live Auto-Refresh (optional but recommended for real-time prices) ─────────
+streamlit-autorefresh>=1.0.1
+
+# ── Standard Library (no install needed — listed for clarity) ─────────────────
+# json, os, re, time, hashlib, warnings — all built-in to Python 3.8+
